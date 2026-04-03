@@ -11,7 +11,7 @@
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 Ensure you have [Poetry](https://python-poetry.org/) installed.
@@ -26,7 +26,7 @@ poetry install
 AMDIS uses FastAPI via OpenEnv to host the environment.
 
 ```bash
-poetry run server
+poetry run uvicorn microbiome.server.app:app
 ```
 *The server will start at `http://localhost:8000` by default.*
 
@@ -39,12 +39,12 @@ poetry run python microbiome/test_local.py
 
 ---
 
-## 🧪 The Science Behind AMDIS
+## The Science Behind AMDIS
 
 The environment is modeled as a **nonlinear dynamical system** using the **Generalized Lotka–Volterra (gLV)** framework.
 
 ### Microbial Dynamics
-We simulate species interactions and drug sensitivities:
+I have simulated species interactions and drug sensitivities:
 $$\frac{dx_i}{dt} = x_i \left(r_i + \sum_{j=1}^{N} a_{ij} x_j \right) - b_i D_t x_i$$
 
 ### Pharmacology Loop
@@ -72,20 +72,11 @@ AMDIS/
 
 ---
 
-## 🤖 RL Formulation
+## RL Formulation
 
 -   **State ($S_t$)**: $[x_1, \dots, x_N, D_t, M_t, H_t]$ (Microbial abundances, Drug/Metabolite levels, Health marker).
 -   **Action ($A_t$)**: Continuous drug dosage $\in [0, D_{max}]$.
 -   **Reward ($R_t$)**: Heavily penalizes high disease severity ($H_t$) and drug toxicity.
     $$R_t = -|H_t - H_{target}| - \lambda D_t$$
 
----
 
-## 🤝 Contributing
-
-We welcome contributions to refine the biological parameters ($a_{ij}, b_i, c_i$) or to implement new disease models. 
-
----
-
-## ⚖️ License
-This project is licensed under the BSD-style license found in the LICENSE file.
