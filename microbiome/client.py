@@ -29,17 +29,17 @@ class MicrobiomeEnv(
         >>> # Connect to a running server
         >>> with MicrobiomeEnv(base_url="http://localhost:8000") as client:
         ...     result = client.reset()
-        ...     print(result.observation.echoed_message)
+        ...     print(result.observation.health_marker)
         ...
-        ...     result = client.step(MicrobiomeAction(message="Hello!"))
-        ...     print(result.observation.echoed_message)
+        ...     result = client.step(MicrobiomeAction(dosage=2.0))
+        ...     print(result.observation.health_marker)
 
     Example with Docker:
         >>> # Automatically start container and connect
         >>> client = MicrobiomeEnv.from_docker_image("microbiome-env:latest")
         >>> try:
         ...     result = client.reset()
-        ...     result = client.step(MicrobiomeAction(message="Test"))
+        ...     result = client.step(MicrobiomeAction(dosage=2.0))
         ... finally:
         ...     client.close()
     """
@@ -55,7 +55,7 @@ class MicrobiomeEnv(
             Dictionary representation suitable for JSON encoding
         """
         return {
-            "message": action.message,
+            "dosage": action.dosage,
         }
 
     def _parse_result(self, payload: Dict) -> StepResult[MicrobiomeObservation]:
@@ -70,8 +70,10 @@ class MicrobiomeEnv(
         """
         obs_data = payload.get("observation", {})
         observation = MicrobiomeObservation(
-            echoed_message=obs_data.get("echoed_message", ""),
-            message_length=obs_data.get("message_length", 0),
+            microbiome_abundances=obs_data.get("microbiome_abundances", []),
+            drug_concentration=obs_data.get("drug_concentration", 0.0),
+            metabolite_concentration=obs_data.get("metabolite_concentration", 0.0),
+            health_marker=obs_data.get("health_marker", 0.0),
             done=payload.get("done", False),
             reward=payload.get("reward"),
             metadata=obs_data.get("metadata", {}),
